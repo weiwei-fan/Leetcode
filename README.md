@@ -1,9 +1,19 @@
 # Leetcode
 
-I will use python to practice leetcode everyday for successfully hunting for a job at 2021 spring.
+这是我刷题找工作的记录帖，秋招总是连环受打击，情况很不乐观，但是我不相信自己是一个失败者，我要踏踏实实刷题，争取在明年春天可以收获满意的offer。不要气馁，加油吧！
 
-When I am in school, I am going to solve 3 problems everyday and write thoughts and analysis.
+我的目标是上学期间每天至少3道，寒假的时候尽可能的多刷。
 
-When I am in winter break, I will try as much as possible.
+除了刷题我还会总结一些概念性的内容，因为这才是自己的。
 
-I believe if I stick to everyday, I will be successful next spring.
+我的刷题顺序会按照分类来刷，同时会参考小土刀的刷题面经。
+1. 数组和字符串
+2. 链表
+3. 栈和队列
+4. 排序和搜索
+5. 递归和动态规划
+6. 树和图
+7. 分治算法
+8. 贪心算法
+
+希望不久的将来，我会成战胜现在的自己，祝我好运！
