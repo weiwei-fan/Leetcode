@@ -93,7 +93,8 @@ class Solution:
 ```
 ### 小技巧总结
 ```python
-遍历word : wordDict，并且用s.startswith(word)是非常慢的，有个小技巧就是遍历s能切分的每个单词s[:i] for i in range(1, len(s) + 1)，判断s[:i]是否在wordSet里面
+遍历word : wordDict，并且用s.startswith(word)是非常慢的，
+有个小技巧就是遍历s能切分的每个单词s[:i] for i in range(1, len(s) + 1)，判断s[:i]是否在wordSet里面
 ```
 
 
