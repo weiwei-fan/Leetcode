@@ -196,4 +196,54 @@ BFS问题的本质是在一幅图中找到起点到终点的最短距离。
 ```python
 # 计算从起点start到终点target的最短距离
 def BFS(start, target):
+    queue = []
+    visited = set() # 避免走回头路
+    queue.append(start)
+    visited.add(start)
+    level = 0
+    
+    while queue:
+        # 将当前队列里所有的节点向四周扩散
+        for i in range(len(queue)):
+            cur = queue.pop(0)
+            # 判断是否到达终点
+            if cur == target:
+                return level
+            for node in cur.adj():
+                if node not in visited:
+                    q.append(node)
+                    visited.add(node)
+            level += 1   
+```
+visited的主要作用是防止走回头路，但是像一般的二叉树结构，没有子节点到父节点的指针，不会走回头路就不需要visited。
+### 双向BFS优化
+传统的 BFS 框架就是从起点开始向四周扩散，遇到终点时停止；而双向 BFS 则是从起点和终点同时开始扩散，当两边有交集的时候停止。</br>
+但是双向 BFS 也有局限，因为你必须知道终点在哪里。比如二叉树最小高度的问题，你一开始根本就不知道终点在哪里，也就无法使用双向 BFS。
+```python
+def doubleBFS(start, target):
+    # 用集合不用队列，可以扩算判断元素是否存在
+    q1, q2 = set(), set()
+    visited = set()
+    level = 0
+    q1.add(start)
+    q2.add(target)
+    
+    while q1 and q2:
+        # 选择较小的集合扩散，占用的空间增长率会慢一些
+        if len(q1) > len(q2):
+            q1, q2 = q2, q1
+        # 将q1中所有节点向周围扩散
+        for node in q1:
+            if node in q2:
+                return level
+            visited.add(node)
+            # 将一个节点未遍历的相邻节点加入集合
+            for adj in q1.adj():
+                if adj not in visited:
+                    q1.append(adj)
+        level += 1
+        # 交换q1和q2，下一轮while就是扩散q2
+        q1, q2 = q2, q1
+    
+    return -1
 ```
