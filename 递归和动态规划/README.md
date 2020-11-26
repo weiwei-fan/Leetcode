@@ -96,5 +96,113 @@ class Solution:
 遍历word : wordDict，并且用s.startswith(word)是非常慢的，
 有个小技巧就是遍历s能切分的每个单词s[:i] for i in range(1, len(s) + 1)，判断s[:i]是否在wordSet里面
 ```
+### 62. Unique Paths
+A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).
 
+
+The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of the grid (marked 'Finish' in the diagram below).
+
+
+How many possible unique paths are there?
+
+
+Tags：Medium, DP, backtracking
+
+
+Approach 1: Backtracking
+```python
+class Solution:
+    def uniquePaths(self, m: int, n: int) -> int:
+        
+        # start to target all possible path  -->  backtracking
+        # the selections of each pos is right and down
+        # Time Limit Exceeded
+        
+        def backtrack(pos, path, paths, m, n):
+            if pos[0] == n - 1 and pos[1] == m - 1:
+                paths.append(path)
+            
+            # right
+            if pos[0] + 1 < n:
+                next_pos = (pos[0] + 1, pos[1])
+                path.append(next_pos)
+                backtrack(next_pos, path, paths, m, n)
+                path.pop()
+            
+            # down
+            if pos[1] + 1 < m:
+                next_pos = (pos[0], pos[1] + 1)
+                path.append(next_pos)
+                backtrack(next_pos, path, paths, m, n)
+                path.pop()
+        
+        paths, paths = [], []    
+        backtrack((0, 0), path, paths, m, n)
+        return len(paths)
+```
+Approach 2: DP
+```python
+        # DP: dp(row, col) = dp(row - 1, col) + dp(row, col - 1)
+        
+        def dp(target, memo):
+            if target in memo:
+                return memo[target]
+            if target == (0, 0):
+                return 1
+            value = 0
+            # upper
+            if target[1] - 1 >= 0:
+                value += dp((target[0], target[1] - 1), memo)
+            # left
+            if target[0] - 1 >= 0:
+                value += dp((target[0] - 1, target[1]), memo)
+            
+            memo[target] = value
+            return value
+        
+        memo = {}
+        return dp((m - 1, n - 1), memo)
+```
+
+### 63. Unique Paths II
+A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).
+
+
+The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of the grid (marked 'Finish' in the diagram below).
+
+
+Now consider if some obstacles are added to the grids. How many unique paths would there be?
+
+
+An obstacle and space is marked as 1 and 0 respectively in the grid.
+
+
+Tags: Medium, DP
+
+```python
+class Solution:
+    def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
+        def dp(target, memo, obstacleGrid):
+            if target in memo:
+                return memo[target]
+            if target == (0, 0):
+                return 1
+            value = 0
+            # upper
+            if target[1] - 1 >= 0 and obstacleGrid[target[0]][target[1] - 1] == 0:
+                value += dp((target[0], target[1] - 1), memo, obstacleGrid)
+            # left
+            if target[0] - 1 >= 0 and obstacleGrid[target[0] - 1][target[1]] == 0:
+                value += dp((target[0] - 1, target[1]), memo, obstacleGrid)
+            
+            memo[target] = value
+            return value
+        
+        memo = {}
+        m, n = len(obstacleGrid), len(obstacleGrid[0])
+        if obstacleGrid[-1][-1] == 1:
+            return 0
+        return dp((m - 1, n - 1), memo, obstacleGrid)
+        
+```
 
