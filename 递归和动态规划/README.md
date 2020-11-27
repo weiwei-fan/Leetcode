@@ -205,4 +205,73 @@ class Solution:
         return dp((m - 1, n - 1), memo, obstacleGrid)
         
 ```
+### 263. Ugly Number
+Write a program to check whether a given number is an ugly number.
 
+Ugly numbers are positive numbers whose prime factors only include 2, 3, 5.
+
+Tags: Easy, Math
+
+```python
+class Solution:
+    def isUgly(self, num: int) -> bool:
+        if num <= 0:
+            return False
+        for i in [2, 3, 5]:
+            while num % i == 0:
+                num = num // i
+        return True if num == 1 else False
+```
+
+### 264. Ugly Number II
+Write a program to find the n-th ugly number.
+
+
+Ugly numbers are positive numbers whose prime factors only include 2, 3, 5. 
+
+
+Tags: Medium, Heap, DP
+
+
+Approach 1: Heap
+```python
+import heapq
+
+class Solution:
+    def nthUglyNumber(self, n: int) -> int:
+        heap = [1]
+        res, visited = set(), set()
+        visited.add(1)
+        while heap:
+            cur = heapq.heappop(heap)
+            res.add(cur)
+            if len(res) == n:
+                break
+            for i in [2, 3, 5]:
+                if i * cur not in visited:
+                    heap.append(i * cur)
+                    visited.add(i * cur)
+            heapq.heapify(heap)
+        lis = list(res)
+        lis.sort()
+        return lis[-1]
+```
+Approach 2: DP
+```python
+import heapq
+
+class Solution:
+    def nthUglyNumber(self, n: int) -> int:
+        nums = [1]
+        i2, i3, i5 = 0, 0, 0
+        for i in range(1, 1690):
+            num = min(nums[i2] * 2, nums[i3] * 3, nums[i5] * 5)
+            nums.append(num)
+            if num == nums[i2] * 2:
+                i2 += 1
+            if num == nums[i3] * 3:
+                i3 += 1
+            if num == nums[i5] * 5:
+                i5 += 1
+        return nums[n - 1]
+```
