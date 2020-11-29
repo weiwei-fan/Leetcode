@@ -486,6 +486,8 @@ Tags: Medium, backtracing
 
 
 Approach 1: backtracing
+
+
 The backtracking algorithms consists of the following steps:
 
 
