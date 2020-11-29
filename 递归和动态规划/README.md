@@ -522,3 +522,23 @@ class Solution:
         self.dfs(0, res, cur, s)
         return res 
 ```
+Approach 2: Backtracing + DP
+we are repeatedly iterating over the same substring multiple times and the result is always the same. There are Overlapping Subproblems and we could further optimize the approach by using dynamic programming to determine if a string is a palindrome in constant time. 
+```python
+class Solution:
+    def dfs(self, start, res, cur, s, dp):
+        if start >= len(s):
+            res.append(list(cur))
+        for end in range(start, len(s)):
+            if s[start] == s[end] and (end - start <= 1 or dp[start + 1][end - 1]):
+                dp[start][end] = True
+                cur.append(s[start: end + 1])
+                self.dfs(end + 1, res, cur, s, dp)
+                cur.pop()
+        
+    def partition(self, s: str) -> List[List[str]]:
+        cur, res = [], []
+        dp = [[False for i in range(len(s))] for j in range(len(s))]
+        self.dfs(0, res, cur, s, dp)
+        return res 
+```
