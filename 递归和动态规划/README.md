@@ -275,3 +275,203 @@ class Solution:
                 i5 += 1
         return nums[n - 1]
 ```
+130. Surrounded Regions
+Given a 2D board containing 'X' and 'O' (the letter O), capture all regions surrounded by 'X'.
+
+
+A region is captured by flipping all 'O's into 'X's in that surrounded region.
+
+
+Surrounded regions shouldn’t be on the border, which means that any 'O' on the border of the board are not flipped to 'X'. Any 'O' that is not on the border and it is not connected to an 'O' on the border will be flipped to 'X'. Two cells are connected if they are adjacent cells connected horizontally or vertically.
+
+
+Tags: Medium, DFS, BFS
+
+Approach 1: DFS
+```python
+class Solution:
+    def dfs(self, board, row, col):
+        if board[row][col] != 'O':
+            return
+        board[row][col] = 'E'
+        if col < len(board[0]) - 1:
+            self.dfs(board, row, col + 1)
+        if row < len(board) - 1:
+            self.dfs(board, row + 1, col)
+        if col > 0:
+            self.dfs(board, row, col - 1)
+        if row > 0:
+            self.dfs(board, row - 1, col)
+        
+    def solve(self, board: List[List[str]]) -> None:
+        if not board or not board[0]:
+            return
+        
+        # retrieve all border cells
+        borders = []
+        for row in range(len(board)):
+            for col in range(len(board[0])):
+                if row == 0 or col == 0 or row == len(board) - 1 or col == len(board[0]) - 1:
+                    if board[row][col] == 'O':
+                        borders.append((row, col))
+        
+        # mark the escaped cells with 'E'
+        for row, col in borders:
+            self.dfs(board, row, col)
+        
+        
+        # flip the captured cells and recover escaped ones
+        for row in range(len(board)):
+            for col in range(len(board[0])):
+                if board[row][col] == 'O':
+                    board[row][col] = 'X'
+                elif board[row][col] == 'E':
+                    board[row][col] = 'O'
+```
+
+Approach 2: BFS
+```python
+from collections import deque
+
+class Solution:
+    def bfs(self, board, row, col):
+        queue = deque()
+        visited = set()
+        queue.append((row, col))
+        visited.add((row, col))
+        while queue:
+            (row, col) = queue.popleft()
+            if board[row][col] != 'O':
+                continue
+            board[row][col] = 'E'
+            if col < len(board[0]) - 1:
+                queue.append((row, col + 1))
+            if row < len(board) - 1:
+                queue.append((row + 1, col))
+            if col > 0:
+                queue.append((row, col - 1))
+            if row > 0:
+                queue.append((row - 1, col))
+        
+    def solve(self, board: List[List[str]]) -> None:
+        if not board or not board[0]:
+            return
+        
+        # retrieve all border cells
+        borders = []
+        for row in range(len(board)):
+            for col in range(len(board[0])):
+                if row == 0 or col == 0 or row == len(board) - 1 or col == len(board[0]) - 1:
+                    if board[row][col] == 'O':
+                        borders.append((row, col))
+        
+        # mark the escaped cells with 'E'
+        for row, col in borders:
+            self.bfs(board, row, col)     
+        
+        # flip the captured cells and recover escaped ones
+        for row in range(len(board)):
+            for col in range(len(board[0])):
+                if board[row][col] == 'O':
+                    board[row][col] = 'X'
+                elif board[row][col] == 'E':
+                    board[row][col] = 'O'
+```
+
+### 42. Trapping Rain Water
+Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.
+
+
+Tags: Hard, Two Pointer, Stack, DP
+
+
+Approach 1: Brute force
+```python
+from collections import deque
+
+class Solution:
+    def trap(self, height: List[int]) -> int:
+        res = []
+        for i in range(len(height)):
+            left_max, right_max = 0, 0
+            for j in range(0, i):
+                left_max = max(left_max, height[j])
+            for k in range(i, len(height)):
+                right_max = max(right_max, height[k])
+            if min(left_max, right_max) - height[i] > 0:
+                res.append(min(left_max, right_max) - height[i])
+        return sum(res)
+```
+
+Approach 2: DP
+```python
+class Solution:
+    def trap(self, height: List[int]) -> int:
+        res = []
+        left_max, right_max = [0] * len(height), [0] * len(height)
+        for i in range(len(height)):
+            if i == 0:
+                left_max[i] = height[i]
+            else:
+                left_max[i] = max(left_max[i - 1], height[i])
+        for i in range(len(height) - 1, -1, -1):
+            if i == len(height) - 1:
+                right_max[i] = height[i]
+            else:
+                right_max[i] = max(right_max[i + 1], height[i])
+        for i in range(len(height)):
+            if min(right_max[i], left_max[i]) - height[i] > 0:
+                res.append(min(right_max[i], left_max[i]) - height[i])
+        
+        return sum(res)
+```
+
+Approach 3: Stack
+```python
+from collections import deque
+
+class Solution:
+    def trap(self, height: List[int]) -> int:
+        stack = deque()
+        res = 0
+        for i in range(len(height)):
+            print(stack)
+            print(res)
+            while stack and height[i] > height[stack[-1]]:
+                top = stack.pop()
+                if not stack:
+                    break
+                distance = i - stack[-1] - 1
+                bounded_height = min(height[i], height[stack[-1]]) - height[top]
+                res += distance * bounded_height
+            stack.append(i)
+        return res
+```
+Approach 4: Two pointer
+```python
+class Solution:
+    def trap(self, height: List[int]) -> int:
+        low, high = 0, len(height) - 1
+        cnt = 0
+        while low < high:
+            if height[low] < height[high]:
+                cnt += self.fill(height, low, high)
+                low += 1
+            elif height[low] > height[high]:
+                cnt += self.fill(height, low, high)
+                high -= 1
+            else:
+                cnt += self.fill(height, low, high)
+                low += 1
+                high -= 1
+        return cnt
+        
+    def fill(self, height, low, high):
+        cnt = 0
+        h = min(height[low], height[high])
+        for i in range(low + 1, high):
+            if height[i] < h:
+                cnt += (h - height[i])
+                height[i] = h
+        return cnt
+```
