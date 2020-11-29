@@ -542,3 +542,29 @@ class Solution:
         self.dfs(0, res, cur, s, dp)
         return res 
 ```
+### 523. Continuous Subarray Sum
+Given a list of non-negative numbers and a target integer k, write a function to check if the array has a continuous subarray of size at least 2 that sums up to a multiple of k, that is, sums up to n*k where n is also an integer.
+
+
+Tags: Medium, DP
+
+
+Approach 1: DP
+```
+累计求和的问题可以先用O(n)的时间把从第一个数到index的数先计算好保存下来summ[i]
+每次要算部分和的时候可以用减法summ[j] - summ[i] + nums[i]求出i-j的sum
+```
+```python
+class Solution:
+    def checkSubarraySum(self, nums: List[int], k: int) -> bool:
+        summ = []
+        summ.append(nums[0])
+        for i in range(1, len(nums)):
+            summ.append(summ[-1] + nums[i])
+        for i in range(len(nums) - 1):
+            for j in range(i + 1, len(nums)):
+                cur = summ[j] - summ[i] + nums[i]
+                if cur == k or (k and cur % k == 0):
+                    return True
+        return False
+```
