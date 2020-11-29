@@ -475,3 +475,48 @@ class Solution:
                 height[i] = h
         return cnt
 ```
+### 131. Palindrome Partitioning
+Given a string s, partition s such that every substring of the partition is a palindrome.
+
+
+Return all possible palindrome partitioning of s.
+
+
+Tags: Medium, backtracing
+
+
+Approach 1: backtracing
+The backtracking algorithms consists of the following steps:
+
+
+Choose: Choose the potential candidate. Here, our potential candidates are all substrings that could be generated from the given string.
+
+
+Constraint: Define a constraint that must be satisfied by the chosen candidate. In this case, the constraint is that the string must be a palindrome.
+
+
+Goal: We must define the goal that determines if have found the required solution and we must backtrack. Here, our goal is achieved if we have reached the end of the string.
+```python
+class Solution:
+    def dfs(self, start, res, cur, s):
+        if start >= len(s):
+            res.append(list(cur))
+        for end in range(start, len(s)):
+            if self.isPalindrome(s, start, end):
+                cur.append(s[start: end + 1])
+                self.dfs(end + 1, res, cur, s)
+                cur.pop()
+                
+    def isPalindrome(self, s, low, high):
+            while low <= high:
+                if s[low] != s[high]:
+                    return False
+                low += 1
+                high -= 1     
+            return True
+        
+    def partition(self, s: str) -> List[List[str]]:
+        cur, res = [], []
+        self.dfs(0, res, cur, s)
+        return res 
+```
