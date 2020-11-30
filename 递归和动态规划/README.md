@@ -568,3 +568,46 @@ class Solution:
                     return True
         return False
 ```
+### 200. Number of Islands
+Given an m x n 2d grid map of '1's (land) and '0's (water), return the number of islands.
+
+
+An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
+
+
+Tags: Medium, BFS
+
+
+#### Approach 1: BFS
+```python
+from collections import deque
+
+class Solution:
+    def bfs(self, grid, row, col):
+        queue = deque()
+        queue.append((row, col))
+        grid[row][col] = "2"
+        while queue:
+            r, c = queue.popleft()
+            if r + 1 < len(grid) and grid[r + 1][c] == "1":
+                grid[r + 1][c] = "2"
+                queue.append((r + 1, c))
+            if c + 1 < len(grid[0]) and grid[r][c + 1] == "1":
+                grid[r][c + 1] = "2"
+                queue.append((r, c + 1))
+            if r - 1 >= 0 and grid[r - 1][c] == "1":
+                grid[r - 1][c] = "2"
+                queue.append((r - 1, c))
+            if c - 1 >= 0 and grid[r][c - 1] == "1":
+                grid[r][c - 1] = "2"
+                queue.append((r, c - 1))
+        
+    def numIslands(self, grid: List[List[str]]) -> int:
+        cnt = 0
+        for row in range(len(grid)):
+            for col in range(len(grid[0])):
+                if grid[row][col] == "1":
+                    cnt += 1
+                    self.bfs(grid, row, col)
+        return cnt
+```
