@@ -611,3 +611,52 @@ class Solution:
                     self.bfs(grid, row, col)
         return cnt
 ```
+### 907. Sum of Subarray Minimums
+Given an array of integers A, find the sum of min(B), where B ranges over every (contiguous) subarray of A.
+
+
+Since the answer may be large, return the answer modulo 10^9 + 7.
+
+
+Tags: Medium, Stack
+
+
+Approach 1: Prev and Next Less Element
+```python
+class Solution:
+    def sumSubarrayMins(self, arr: List[int]) -> int:
+        left = [1] * len(arr)
+        stack = [(arr[0], 1)]
+        for i in range(1, len(arr)):
+            while stack and arr[i] <= stack[-1][0]:
+                left[i] += stack.pop()[1]
+            stack.append((arr[i], left[i]))
+        right = [1] * len(arr)
+        stack = [(arr[-1], 1)]
+        for i in range(len(arr) - 2, -1, -1):
+            while stack and arr[i] <= stack[-1][0]:
+                right[i] += stack.pop()[1]
+            stack.append((arr[i], right[i])) 
+        res = 0
+        for i in range(len(arr)):
+            res += arr[i] * left[i] * right[i]
+        return res % (10 ** 9 + 7)
+```
+Approach 2: Stack
+```python
+class Solution:
+    def sumSubarrayMins(self, arr: List[int]) -> int:
+        MOD = 10 ** 9 + 7
+        stack = []
+        res = cur = 0
+        for index, value in enumerate(arr):
+            count = 1
+            while stack and stack[-1][0] >= value:
+                val, cnt = stack.pop()
+                count += cnt
+                cur -= val * cnt
+            stack.append((value, count))
+            cur += value * count
+            res += cur
+        return res % MOD
+```
