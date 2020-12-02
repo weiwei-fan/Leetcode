@@ -660,3 +660,116 @@ class Solution:
             res += cur
         return res % MOD
 ```
+### 39. Combination Sum
+Given an array of distinct integers candidates and a target integer target, return a list of all unique combinations of candidates where the chosen numbers sum to target. You may return the combinations in any order.
+
+
+The same number may be chosen from candidates an unlimited number of times. Two combinations are unique if the frequency of at least one of the chosen numbers is different.
+
+
+It is guaranteed that the number of unique combinations that sum up to target is less than 150 combinations for the given input.
+
+
+Tags: Medium, BackTracing
+```python
+class Solution:
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        ret = []
+        self.dfs(candidates, target, [], ret)
+        return ret
+    
+    def dfs(self, nums, target, path, ret):
+        if target < 0:
+            return 
+        if target == 0:
+            ret.append(list(path))
+            return 
+        for i in range(len(nums)):
+            path.append(nums[i])
+            self.dfs(nums[i:], target-nums[i], path, ret)
+            path.pop()
+```
+
+### 40. Combination Sum II
+Given a collection of candidate numbers (candidates) and a target number (target), find all unique combinations in candidates where the candidate numbers sum to target.
+
+
+Each number in candidates may only be used once in the combination.
+
+
+Note: The solution set must not contain duplicate combinations.
+
+
+Tags: Meduim, BackTracing(sort + skip repeating)
+```python
+class Solution:
+    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+        res = []
+        candidates = sorted(candidates)
+        self.backtrack(candidates, target, [], res)
+        return res
+    
+    def backtrack(self, candidates, target, cur, res):
+        if target < 0:
+            return
+        if target == 0:
+            res.append(list(cur))
+            return
+        for i in range(len(candidates)):
+            if i > 0 and candidates[i] == candidates[i - 1]:
+                continue
+            cur.append(candidates[i])
+            self.backtrack(candidates[i + 1:], target - candidates[i], cur, res)
+            cur.pop()
+```
+
+### 64. Minimum Path Sum
+Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right, which minimizes the sum of all numbers along its path.
+
+
+Note: You can only move either down or right at any point in time.
+
+
+Tags: Medium, BackTracing, DP
+
+
+#### Approach 1: BackTracing[TLE]
+```python
+class Solution:
+    def minPathSum(self, grid: List[List[int]]) -> int:
+        def backtrack(row, col, cur_len, min_len):
+            if row == len(grid) - 1 and col == len(grid[0]) - 1:
+                cur_len += grid[row][col]
+                min_len[0] = min(cur_len, min_len[0])
+                return
+
+            if row + 1 < len(grid):
+                cur_len += grid[row][col]
+                backtrack(row + 1, col, cur_len, min_len)
+                cur_len -= grid[row][col]
+
+            if col + 1 < len(grid[0]):
+                cur_len += grid[row][col]
+                backtrack(row, col + 1, cur_len, min_len)
+                cur_len -= grid[row][col]
+        
+        min_len = [float('inf')]
+        backtrack(0, 0, 0, min_len)
+        return min_len[0]
+```
+
+#### Approach 2: DP
+```python
+class Solution:
+    def minPathSum(self, grid: List[List[int]]) -> int:
+        m = len(grid)
+        n = len(grid[0])
+        for i in range(1, n):
+            grid[0][i] += grid[0][i-1]
+        for i in range(1, m):
+            grid[i][0] += grid[i-1][0]
+        for i in range(1, m):
+            for j in range(1, n):
+                grid[i][j] += min(grid[i-1][j], grid[i][j-1])
+        return grid[-1][-1]
+```
