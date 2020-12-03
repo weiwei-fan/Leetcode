@@ -773,3 +773,68 @@ class Solution:
                 grid[i][j] += min(grid[i-1][j], grid[i][j-1])
         return grid[-1][-1]
 ```
+### 53. Maximum Subarray
+Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.
+
+
+Follow up: If you have figured out the O(n) solution, try coding another solution using the divide and conquer approach, which is more subtle.
+
+
+Tags: DP, Divide and Conquer
+
+#### Approach 1 : DP
+DP is one idea to optimize the result. In this case, we want to find maximum sum of subarray. If the previous value is a negative num, the previous one plus current one cannot be the maximum, so we will not update the current num. we just update the max_sum with a bigger one(origional max_sum or the current num).
+```python
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        max_sum = nums[0]
+        for i in range(1, len(nums)):
+            if nums[i - 1] > 0:
+                nums[i] += nums[i - 1]
+            max_sum = max(max_sum, nums[i])
+        return max_sum
+```
+
+#### Approach 2: Divide and Conquer
+Let's follow here a solution template for the divide and conquer problems :
+
+
+Define the base case(s), which means the sub-problem can be solved easily. In this case, when the sub-array contains only one element, it can be returned directly. 
+
+
+Split the problem into subproblems and solve them recursively. In divide and conquer solution, always divide problem into half-and-half parts.
+
+
+Merge the solutions for the subproblems to obtain the solution for the original problem. In this situation, collect the maximum from bottom. 
+```python
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        return self.helper(nums, 0, len(nums) - 1)
+    
+    def helper(self, nums, left, right):
+        if left == right:
+            return nums[left]
+        mid = (left + right) // 2
+        max_left = self.helper(nums, left, mid)
+        max_right = self.helper(nums, mid + 1, right)
+        cross_sum = self.cross_sum(nums, left, mid, right)
+        return max(max_left, max_right, cross_sum)
+    
+    def cross_sum(self, nums, left, mid, right):
+        if left == right:
+            return nums[left]
+        
+        left_max = float('-inf')
+        cur_sum = 0
+        for i in range(mid, left - 1, -1):
+            cur_sum += nums[i]
+            left_max = max(left_max, cur_sum)
+        
+        right_max = float('-inf')
+        cur_sum = 0
+        for i in range(mid + 1, right + 1):
+            cur_sum += nums[i]
+            right_max = max(right_max, cur_sum)
+            
+        return right_max + left_max
+```
