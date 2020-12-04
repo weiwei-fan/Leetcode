@@ -838,3 +838,47 @@ class Solution:
             
         return right_max + left_max
 ```
+### 567. Permutation in String
+Given two strings s1 and s2, write a function to return true if s2 contains the permutation of s1. In other words, one of the first string's permutations is the substring of the second string.
+
+
+Tags: Medium, Slide window
+#### Approach 1: Slide window without memory
+```python
+from collections import Counter
+
+class Solution:
+    def checkInclusion(self, s1: str, s2: str) -> bool:
+        n = len(s1)
+        for i in range(0, len(s2) - n + 1):
+            if Counter(s1) == Counter(s2[i : i + n]):     
+                return True
+        return False
+```
+
+#### Approach 2: Slide window with memory
+when we slide the window, we know that we remove one preceding character and add a new succeeding character to the new window considered.
+```python
+from collections import Counter
+
+class Solution:
+    def checkInclusion(self, s1: str, s2: str) -> bool:
+        def matches(s1map, s2map):
+            for i in range(26):
+                if s1map[i] != s2map[i]:
+                    return False
+            return True
+        
+        if len(s1) > len(s2):
+            return False
+        s1map, s2map = [0] * 26, [0] * 26
+        for i in range(len(s1)):
+            s1map[ord(s1[i]) - ord('a')] += 1
+            s2map[ord(s2[i]) - ord('a')] += 1
+        for i in range(len(s2) - len(s1)):
+            if matches(s1map, s2map):
+                return True
+            s2map[ord(s2[i + len(s1)]) - ord('a')] += 1
+            s2map[ord(s2[i]) - ord('a')] -= 1
+        return matches(s1map, s2map)
+```
