@@ -882,3 +882,44 @@ class Solution:
             s2map[ord(s2[i]) - ord('a')] -= 1
         return matches(s1map, s2map)
 ```
+### 221. Maximal Square
+Given an m x n binary matrix filled with 0's and 1's, find the largest square containing only 1's and return its area.
+
+
+Tags: Medium, DP
+#### Approach 1: Brute force
+```python
+class Solution:
+    def maximalSquare(self, matrix: List[List[str]]) -> int:
+        def isValid(row, col, size):
+            for i in range(row, row + size):
+                for j in range(col, col + size):
+                    if matrix[i][j] == "0":
+                        return False
+            return True
+        
+        def findMatrixWithSize(size):
+            if size == min(len(matrix), len(matrix[0])) + 1:
+                return size - 1
+            for i in range(len(matrix) - size + 1):
+                for j in range(len(matrix[0]) - size + 1):
+                    if isValid(i, j, size):
+                        return findMatrixWithSize(size + 1)
+            return size - 1
+        
+        return findMatrixWithSize(1) ** 2
+```
+#### Approach 2: DP
+```python
+class Solution:
+    def maximalSquare(self, matrix: List[List[str]]) -> int:
+        if not matrix or not matrix[0]: return 0
+        dp = [[0] * (len(matrix[0]) + 1) for i in range(len(matrix) + 1)]
+        max_len = 0
+        for i in range(1, len(matrix) + 1):
+            for j in range(1, len(matrix[0]) + 1):
+                if matrix[i - 1][j - 1] == "1":
+                    dp[i][j] = min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]) + 1
+                    max_len = max(max_len, dp[i][j])
+        return max_len ** 2
+```
