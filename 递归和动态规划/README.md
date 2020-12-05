@@ -923,3 +923,30 @@ class Solution:
                     max_len = max(max_len, dp[i][j])
         return max_len ** 2
 ```
+### 152. Maximum Product Subarray
+Given an integer array nums, find the contiguous subarray within an array (containing at least one number) which has the largest product.
+
+
+Tags: Medium, DP
+
+#### Ideas for this kind of problems:
+```python
+## Approach 1: brute force
+# Find all subarray(contain at least one number), calculate product and find Max
+## Approach 2: store products
+# products = [2, 6, -12, 4] => products[2] / products[0] = -12 / 2 = -6
+## Approach 3: DP
+# memo[i] = (min, max) means include nums[i], the maximum and minimum
+```
+#### Approach 1: DP
+```python
+class Solution:
+    def maxProduct(self, nums: List[int]) -> int:
+        memo = [(nums[0], nums[0])]
+        maximum = nums[0]
+        for i in range(1, len(nums)):
+            cur = [nums[i], memo[i - 1][0] * nums[i], memo[i - 1][1] * nums[i]]
+            memo.append((min(cur), max(cur)))
+            maximum = max(maximum, max(cur))
+        return maximum
+```
